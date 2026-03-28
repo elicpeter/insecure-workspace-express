@@ -1,0 +1,15 @@
+<%- include("../partials/header", { title }) %>
+<section class="card">
+  <h1>Link Preview</h1>
+  <form action="/utilities/link-preview" method="get" class="inline-search">
+    <input type="text" name="url" value="<%= targetUrl %>" placeholder="https://example.test">
+    <button type="submit">Fetch</button>
+  </form>
+  <% if (preview) { %>
+    <h2>Status: <%= preview.statusCode %></h2>
+    <pre><%= JSON.stringify(preview.headers, null, 2) %></pre>
+    <pre><%= preview.body.slice(0, 400) %></pre>
+  <% } %>
+</section>
+<%- include("../partials/footer") %>
+

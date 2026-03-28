@@ -1,0 +1,18 @@
+<%- include("../partials/header", { title }) %>
+<section class="card narrow">
+  <h1>Sign In</h1>
+  <form action="/login" method="post" class="stack">
+    <label>
+      Email
+      <input type="email" name="email" value="alice@demo.test" required>
+    </label>
+    <label>
+      Password
+      <input type="password" name="password" value="alice123" required>
+    </label>
+    <input type="hidden" name="returnTo" value="<%= next %>">
+    <button type="submit">Sign In</button>
+  </form>
+</section>
+<%- include("../partials/footer") %>
+

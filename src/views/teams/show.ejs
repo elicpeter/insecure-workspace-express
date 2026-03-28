@@ -1,0 +1,102 @@
+<%- include("../partials/header", { title }) %>
+<section class="split">
+  <div class="stack">
+    <article class="card">
+      <h1><%= workspace.name %></h1>
+      <p><strong>Slug:</strong> <%= workspace.slug %></p>
+      <p><strong>Billing:</strong> <%= workspace.billing_email %></p>
+    </article>
+
+    <article class="card">
+      <h2>Projects</h2>
+      <div class="grid">
+        <% projects.forEach((project) => { %>
+          <div class="project-card">
+            <h3><a href="/projects/<%= project.id %>"><%= project.name %></a></h3>
+            <p><%= project.summary %></p>
+            <p class="muted-label"><%= project.status %> · <%= project.visibility %></p>
+          </div>
+        <% }) %>
+      </div>
+
+      <h3>Create Project</h3>
+      <form action="/projects" method="post" class="stack">
+        <input type="hidden" name="workspaceId" value="<%= workspace.id %>">
+        <label>
+          Name
+          <input type="text" name="name" required>
+        </label>
+        <label>
+          Summary
+          <textarea name="summary" rows="3"></textarea>
+        </label>
+        <label>
+          Visibility
+          <select name="visibility">
+            <option value="private">Private</option>
+            <option value="team">Team</option>
+            <option value="public">Public</option>
+          </select>
+        </label>
+        <button type="submit">Create Project</button>
+      </form>
+    </article>
+  </div>
+
+  <aside class="stack">
+    <article class="card">
+      <h2>Members</h2>
+      <ul>
+        <% members.forEach((member) => { %>
+          <li><%= member.full_name %> (<%= member.email %>) · <%= member.membership_role %></li>
+        <% }) %>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Invite Member</h2>
+      <form action="/workspaces/<%= workspace.id %>/invitations" method="post" class="stack">
+        <label>
+          Email
+          <input type="email" name="email" required>
+        </label>
+        <label>
+          Requested role
+          <select name="requestedRole">
+            <option value="member">Member</option>
+            <option value="manager">Manager</option>
+            <option value="owner">Owner</option>
+          </select>
+        </label>
+        <button type="submit">Create Invite</button>
+      </form>
+      <h3>Pending Invites</h3>
+      <ul>
+        <% invitations.forEach((invite) => { %>
+          <li>
+            <code><%= invite.token %></code> for <%= invite.email %>
+            <form action="/invitations/<%= invite.token %>/accept" method="post" class="stack compact">
+              <input type="hidden" name="workspaceId" value="<%= invite.workspace_id %>">
+              <label>
+                Accept as role
+                <input type="text" name="role" value="<%= invite.requested_role %>">
+              </label>
+              <button type="submit">Accept Invite</button>
+            </form>
+          </li>
+        <% }) %>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Exports</h2>
+      <ul>
+        <% exports.forEach((job) => { %>
+          <li>#<%= job.id %> <%= job.status %> · <%= job.output_path %></li>
+        <% }) %>
+      </ul>
+    </article>
+  </aside>
+</section>
+<%- include("../partials/footer") %>
+

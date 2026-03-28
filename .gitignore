@@ -1,0 +1,11 @@
+node_modules
+.env
+.idea
+coverage
+dist
+tmp
+src/uploads/*
+!src/uploads/.gitkeep
+exports/*
+!exports/.gitkeep
+

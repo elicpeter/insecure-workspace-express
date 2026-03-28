@@ -1,0 +1,28 @@
+<%- include("../partials/header", { title }) %>
+<section class="split">
+  <div class="card">
+    <h1>Your Profile</h1>
+    <form action="/profile" method="post" class="stack">
+      <label>
+        Bio
+        <textarea name="bio" rows="3"><%= user.bio %></textarea>
+      </label>
+      <label>
+        Signature HTML
+        <textarea name="signatureHtml" rows="4"><%= user.signature_html %></textarea>
+      </label>
+      <label>
+        Theme config JSON-ish
+        <textarea name="themeConfig" rows="4"><%= user.theme_config %></textarea>
+      </label>
+      <button type="submit">Save Profile</button>
+    </form>
+  </div>
+  <aside class="card">
+    <h2>Live Signature Preview</h2>
+    <!-- VULN-034: Stored profile HTML is rendered back without sanitization. -->
+    <div class="user-html"><%- user.signature_html %></div>
+  </aside>
+</section>
+<%- include("../partials/footer") %>
+

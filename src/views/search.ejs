@@ -1,0 +1,21 @@
+<%- include("partials/header", { title }) %>
+<section class="card">
+  <h1>Search</h1>
+  <form action="/search" method="get" class="inline-search">
+    <input type="text" name="q" value="<%= query %>" placeholder="Search projects and notes">
+    <input type="text" name="workspaceId" value="<%= workspaceId %>" placeholder="Workspace id">
+    <button type="submit">Search</button>
+  </form>
+  <!-- VULN-035: Query text is reflected back as raw HTML in the search heading. -->
+  <h2>Results for <span class="user-html"><%- query %></span></h2>
+  <ul>
+    <% results.forEach((result) => { %>
+      <li>
+        <a href="/projects/<%= result.id %>"><%= result.name %></a>
+        <span class="muted-label">Workspace <%= result.workspace_name %> (#<%= result.workspace_id %>)</span>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+<%- include("partials/footer") %>
+

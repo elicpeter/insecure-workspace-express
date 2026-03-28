@@ -1,0 +1,25 @@
+<%- include("../partials/header", { title }) %>
+<section class="card narrow">
+  <h1>Workspace Export</h1>
+  <form action="/reports/export" method="post" class="stack">
+    <label>
+      Workspace ID
+      <input type="number" name="workspaceId" value="1" required>
+    </label>
+    <label>
+      File name
+      <input type="text" name="fileName" value="team-report">
+    </label>
+    <label>
+      Format
+      <input type="text" name="format" value="csv">
+    </label>
+    <label>
+      Filter
+      <input type="text" name="filter" placeholder="launch">
+    </label>
+    <button type="submit">Create Export</button>
+  </form>
+</section>
+<%- include("../partials/footer") %>
+

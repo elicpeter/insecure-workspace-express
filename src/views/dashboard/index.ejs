@@ -1,0 +1,52 @@
+<%- include("../partials/header", { title }) %>
+<section class="split">
+  <div>
+    <h1>Your Workspaces</h1>
+    <div class="grid">
+      <% workspaces.forEach((workspace) => { %>
+        <article class="card">
+          <h2><a href="/workspaces/<%= workspace.id %>"><%= workspace.name %></a></h2>
+          <p><%= workspace.billing_email %></p>
+          <p class="muted-label">Role: <%= workspace.membership_role %></p>
+        </article>
+      <% }) %>
+    </div>
+  </div>
+  <aside class="card">
+    <h2>Create Workspace</h2>
+    <form action="/workspaces" method="post" class="stack">
+      <label>
+        Name
+        <input type="text" name="name" placeholder="New workspace" required>
+      </label>
+      <label>
+        Billing email
+        <input type="email" name="billingEmail" placeholder="billing@example.test">
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" name="private" checked>
+        Private workspace
+      </label>
+      <button type="submit">Create</button>
+    </form>
+    <hr>
+    <h2>Support Tools</h2>
+    <p class="muted-label">Visible to admins, but still sent as a normal form.</p>
+    <% if (currentUser.role === "admin" || canManageUsers) { %>
+      <form action="/support/impersonate" method="post" class="stack">
+        <label>
+          Impersonate email
+          <input type="email" name="email" placeholder="user@demo.test" required>
+        </label>
+        <button type="submit">Impersonate</button>
+      </form>
+      <% if (currentUser && currentUser.email !== "admin@demo.test") { %>
+        <form action="/support/stop" method="post" class="inline-form">
+          <button type="submit">Stop Impersonating</button>
+        </form>
+      <% } %>
+    <% } %>
+  </aside>
+</section>
+<%- include("../partials/footer") %>
+

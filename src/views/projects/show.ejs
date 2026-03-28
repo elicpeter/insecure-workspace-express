@@ -1,0 +1,109 @@
+<%- include("../partials/header", { title }) %>
+<section class="split">
+  <div class="stack">
+    <article class="card">
+      <h1><%= project.name %></h1>
+      <p><%= project.summary %></p>
+      <p class="muted-label">Workspace: <%= project.workspace_name %> · <%= project.status %> · <%= project.visibility %></p>
+      <form action="/projects/<%= project.id %>/update" method="post" class="stack">
+        <label>
+          Project name
+          <input type="text" name="name" value="<%= project.name %>">
+        </label>
+        <label>
+          Summary
+          <textarea name="summary" rows="4"><%= project.summary %></textarea>
+        </label>
+        <label>
+          Visibility
+          <select name="visibility">
+            <option value="private" <%= project.visibility === "private" ? "selected" : "" %>>Private</option>
+            <option value="team" <%= project.visibility === "team" ? "selected" : "" %>>Team</option>
+            <option value="public" <%= project.visibility === "public" ? "selected" : "" %>>Public</option>
+          </select>
+        </label>
+        <button type="submit">Update Project</button>
+      </form>
+      <div class="inline-actions">
+        <a class="button" href="/projects/<%= project.id %>/publish-review">Publish flow</a>
+        <form action="/projects/<%= project.id %>/delete" method="post" class="inline-form">
+          <button type="submit">Delete Project</button>
+        </form>
+      </div>
+    </article>
+
+    <article class="card">
+      <h2>Notes</h2>
+      <% notes.forEach((note) => { %>
+        <section class="note">
+          <h3><%= note.title %></h3>
+          <p class="muted-label">By <%= note.author_name %> · internal: <%= note.is_internal %></p>
+          <!-- VULN-033: User note content is rendered as trusted HTML after weak markdown handling. -->
+          <div class="user-html"><%- renderUserMarkdown(note.body) %></div>
+          <div class="signature"><%- note.signature_html %></div>
+          <form action="/notes/<%= note.id %>/edit" method="post" class="stack compact">
+            <label>
+              Title
+              <input type="text" name="title" value="<%= note.title %>">
+            </label>
+            <label>
+              Body
+              <textarea name="body" rows="3"><%= note.body %></textarea>
+            </label>
+            <button type="submit">Quick Edit Note</button>
+          </form>
+        </section>
+      <% }) %>
+
+      <form action="/projects/<%= project.id %>/notes" method="post" class="stack">
+        <h3>Add Note</h3>
+        <label>
+          Title
+          <input type="text" name="title" required>
+        </label>
+        <label>
+          Body
+          <textarea name="body" rows="4" required></textarea>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="isInternal">
+          Internal note
+        </label>
+        <button type="submit">Save Note</button>
+      </form>
+    </article>
+
+    <article class="card">
+      <h2>Comments</h2>
+      <ul>
+        <% comments.forEach((comment) => { %>
+          <li><strong><%= comment.author_name %>:</strong> <%= comment.body %></li>
+        <% }) %>
+      </ul>
+      <form action="/projects/<%= project.id %>/comments" method="post" class="stack">
+        <textarea name="body" rows="3" required></textarea>
+        <button type="submit">Add Comment</button>
+      </form>
+    </article>
+  </div>
+
+  <aside class="stack">
+    <article class="card">
+      <h2>Attachments</h2>
+      <ul>
+        <% attachments.forEach((attachment) => { %>
+          <li>
+            <a href="/attachments/<%= attachment.id %>/download"><%= attachment.original_name %></a>
+            <a href="/attachments/<%= attachment.id %>/download?path=../../.env">Try custom path</a>
+          </li>
+        <% }) %>
+      </ul>
+      <form action="/projects/<%= project.id %>/attachments" method="post" enctype="multipart/form-data" class="stack">
+        <input type="file" name="attachment" required>
+        <button type="submit">Upload File</button>
+      </form>
+    </article>
+  </aside>
+</section>
+<%- include("../partials/footer") %>
+

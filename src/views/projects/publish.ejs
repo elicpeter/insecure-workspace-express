@@ -1,0 +1,18 @@
+<%- include("../partials/header", { title }) %>
+<section class="card narrow">
+  <h1>Publish Project</h1>
+  <p>This is a two-step flow that confirms public visibility before publishing.</p>
+  <form action="/projects/publish-confirm" method="post" class="stack">
+    <input type="hidden" name="projectId" value="<%= projectId %>">
+    <label>
+      Final visibility
+      <select name="visibility">
+        <option value="team">Team</option>
+        <option value="public">Public</option>
+      </select>
+    </label>
+    <button type="submit">Publish now</button>
+  </form>
+</section>
+<%- include("../partials/footer") %>
+

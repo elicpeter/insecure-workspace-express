@@ -1,0 +1,106 @@
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  full_name TEXT NOT NULL,
+  password_hash TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'user',
+  bio TEXT DEFAULT '',
+  signature_html TEXT DEFAULT '',
+  theme_config TEXT DEFAULT '{}',
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS workspaces (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  billing_email TEXT NOT NULL,
+  private BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS memberships (
+  id SERIAL PRIMARY KEY,
+  workspace_id INTEGER NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  role TEXT NOT NULL DEFAULT 'member',
+  invited_by INTEGER REFERENCES users(id),
+  accepted BOOLEAN NOT NULL DEFAULT TRUE,
+  joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  UNIQUE (workspace_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS invitations (
+  id SERIAL PRIMARY KEY,
+  workspace_id INTEGER NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  token TEXT NOT NULL UNIQUE,
+  invited_by INTEGER REFERENCES users(id),
+  requested_role TEXT NOT NULL DEFAULT 'member',
+  accepted BOOLEAN NOT NULL DEFAULT FALSE,
+  expires_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+  id SERIAL PRIMARY KEY,
+  workspace_id INTEGER NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  summary TEXT DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'draft',
+  visibility TEXT NOT NULL DEFAULT 'private',
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS notes (
+  id SERIAL PRIMARY KEY,
+  project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  is_internal BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+  id SERIAL PRIMARY KEY,
+  project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  body TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS attachments (
+  id SERIAL PRIMARY KEY,
+  project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  uploader_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  original_name TEXT NOT NULL,
+  stored_name TEXT NOT NULL,
+  storage_path TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS export_jobs (
+  id SERIAL PRIMARY KEY,
+  workspace_id INTEGER NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  requested_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  format TEXT NOT NULL,
+  filter TEXT DEFAULT '',
+  output_path TEXT DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'queued',
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id SERIAL PRIMARY KEY,
+  actor_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  action TEXT NOT NULL,
+  target_type TEXT NOT NULL,
+  target_id INTEGER,
+  metadata TEXT DEFAULT '',
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
