@@ -17,7 +17,7 @@ This repository contains an intentionally vulnerable web application.
 
 ## AI Disclaimer
 
-This repository was generated with AI assistance. It may contain mistakes beyond the intentional insecurity, rough edges, and unrealistic implementation choices. Treat it as a local-only demo target and not as production-ready software.
+This repository was generated with AI assistance. It may contain mistakes, unstable behavior, and flaws beyond the intentional vulnerabilities documented below. Use it only in isolated local environments.
 
 ## Overview
 
